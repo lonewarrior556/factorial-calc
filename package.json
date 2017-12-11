@@ -1,0 +1,17 @@
+{
+  "name": "factorial-calc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha ./test"
+  },
+  "author": "Konrad Dudziak",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^14.5.0",
+    "jquery": "^3.2.1",
+    "mocha": "^4.0.1",
+    "power-assert": "^1.4.4"
+  }
+}
