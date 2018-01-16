@@ -1,6 +1,7 @@
 var legend = require('./primes')
 var ffs = {"1":[]}
 
+// turn all factorials below 5001! into prime factor arrays
 for (var i = 2; i <= 5000; i++) {
   var start = ffs[i-1]
   var facts = pFactorize(i)
@@ -11,11 +12,12 @@ for (var i = 2; i <= 5000; i++) {
 var strTop = "19! * 50! * 72 *77 * 35990 * 16226709967 *10000"
 var strBot = "70!"
 var arrTop = strTop.replace(/ /g,'').replace(/x/g,'*').split('*').map(parseEntry).reduce(add)
-var arrBot = strBot.replace(/ /g,'').replace(/x/g,'*').split('*').map(parseEntry).reduce(add)
-var sol = divideOut(arrTop, arrBot).map(function(a){
-  return transform(a)
-})
-console.log(sol.join('\n----------------------\n'))
+console.log(arrTop)
+// var arrBot = strBot.replace(/ /g,'').replace(/x/g,'*').split('*').map(parseEntry).reduce(add)
+// var sol = divideOut(arrTop, arrBot).map(function(a){
+//   return transform(a)
+// })
+// console.log(sol.join('\n----------------------\n'))
 
 // parseEquation(equation :string) :number[]
 function parseEquation(equation){
@@ -43,19 +45,20 @@ function add(a,b){
   return added
 }
 
-// divideOut(a :number[], b :number[]) :[number[], number[]]
-function divideOut(a,b){
-  a = a.slice()
-  b = b.slice()
-  var max = Math.max(a.length, b.length)
+// divideOut(numerator :number[], denominator :number[]) :[number[], number[]]
+function divideOut(numerator, denominator){
+  numerator = numerator.slice()
+  denominator = denominator.slice()
+  var max = Math.max(numerator.length, denominator.length)
   for (var j = 0; j < max; j++) {
-    var aj = a[j]
-    var bj = b[j]
-    var min = Math.min(aj,bj) || 0
-    a[j] = (aj-min)||0
-    b[j] = (bj-min)||0
+    var nj = numerator[j]
+    var dj = denominator[j]
+    var min = Math.min(nj, dj) || 0
+    numerator[j] = (nj - min) || 0
+    denominator[j] = (dj - min) || 0
   }
-  return [a,b]
+
+  return [numerator, denominator]
 }
 
 // removeTens(arr :number[]) :string
@@ -90,6 +93,7 @@ function transform(arr, groupTens, fixed){
 // pFactorize(n :number) :number[]
 function pFactorize(n){
   var factors = []
+  // quickly run through an array of early primes
   for( var prime of legend){
     if(n === 1){break;}
     var amount = 0
@@ -99,7 +103,40 @@ function pFactorize(n){
     }
     factors.push(amount)
   }
+  // brute force remaining primes
+  var next = prime + 2
+  while (n !== 1) {
+    if (_isPrime(next)) {
+      var amount = 0
+      while(n%next === 0){
+        n = n/next
+        amount++
+      }
+      factors.push(amount)
+    }
+    next+=2
+  }
+
   return factors
+}
+
+function choose(n,k) {
+  // n!/(n-k)!*k!
+}
+
+function _isPrime(number) {
+    if (number % 2 < 1) {
+      return false
+    }
+    if (number % 10 === 5 && number !== 5 ){
+      return false
+    }
+    var start = 3;
+    while (start <= Math.sqrt(number)) {
+        if (number % start < 1) return false;
+        start+=2
+    }
+    return number > 1;
 }
 
 module.exports = {
@@ -111,3 +148,5 @@ module.exports = {
   removeTens: removeTens,
   transform: transform,
 }
+module.exports.EVAL_FORMAT = false
+module.exports.EXP_FORMAT = true
